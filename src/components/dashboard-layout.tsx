@@ -41,6 +41,9 @@ import {
   CheckCircle2,
   Clock,
   AlertTriangle,
+  Menu,
+  X,
+  Plus,
 } from "lucide-react";
 
 type FilterType =
@@ -61,11 +64,11 @@ export function DashboardLayout() {
   const [sortBy, setSortBy] = useState<SortType>("created");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<Task | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const applyFilters = (taskList: Task[]) => {
     let filtered = taskList;
 
-    // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (task) =>
@@ -75,11 +78,8 @@ export function DashboardLayout() {
       );
     }
 
-    // Apply special filters
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
     switch (activeFilter) {
       case "due-today":
@@ -231,47 +231,99 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
+      <header className="bg-white border-b border-slate-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-slate-900">ZygoTask Pro</h1>
-            <div className="relative">
+          <div className="flex items-center gap-3">
+            {/* Botão hambúrguer (mobile) */}
+            <button
+              onClick={() => setSidebarOpen((v) => !v)}
+              className="lg:hidden p-2 rounded-md hover:bg-slate-100"
+              aria-label={sidebarOpen ? "Fechar menu" : "Abrir menu"}
+            >
+              {sidebarOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
+
+            <h1 className="text-xl font-bold text-slate-900">ZygoTask Pro</h1>
+
+            {/* Busca (desktop/tablet) */}
+            <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <Input
                 placeholder="Buscar tarefas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-80 bg-slate-50 border-slate-200"
+                className="pl-10 w-64 bg-slate-50 border-slate-200"
               />
             </div>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2">
-                <User className="w-4 h-4" />
-                <span>{user?.name}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={logout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            {/* Botão Adicionar (mobile) */}
+            <div className="fixed bottom-6 right-6 z-50 lg:hidden">
+              <AddTaskModal
+                trigger={
+                  <Button
+                    className="h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 flex items-center justify-center"
+                    aria-label="Adicionar Tarefa"
+                  >
+                    {/* ícone + acessibilidade */}
+                    <Plus className="h-6 w-6 text-white" />
+                  </Button>
+                }
+              />
+            </div>
+
+            {/* Perfil */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center space-x-2">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">{user?.name}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={logout}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Busca (mobile) */}
+        <div className="relative mt-3 md:hidden">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <Input
+            placeholder="Buscar tarefas..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 w-full bg-slate-50 border-slate-200"
+          />
         </div>
       </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-80 bg-white border-r border-slate-200 min-h-[calc(100vh-73px)]">
-          <div className="p-6">
-            <AddTaskModal />
+      <div className="flex flex-1">
+        {/* Sidebar: drawer no mobile, fixa no desktop */}
+        <aside
+          className={`fixed inset-y-0 left-0 w-80 bg-white border-r border-slate-200 transform transition-transform duration-200 ease-out lg:translate-x-0 lg:static z-50 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="p-6 overflow-y-auto h-full">
+            {/* Botão Adicionar (desktop) */}
+            <div className="hidden lg:block">
+              <AddTaskModal />
+            </div>
 
             <div className="space-y-6 mt-6">
+              {/* Visão Geral */}
               <div className="bg-slate-50 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">
                   Visão Geral
@@ -302,6 +354,7 @@ export function DashboardLayout() {
                 </div>
               </div>
 
+              {/* Grupos de Tarefas */}
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-700">
                   Grupos de Tarefas
@@ -314,6 +367,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setSelectedGroup(group.name);
                       setActiveFilter("all");
+                      setSidebarOpen(false); // fecha o drawer no mobile ao selecionar
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       selectedGroup === group.name && activeFilter === "all"
@@ -329,6 +383,7 @@ export function DashboardLayout() {
                 ))}
               </div>
 
+              {/* Filtros Rápidos */}
               <div>
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">
                   Filtros Rápidos
@@ -338,6 +393,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setActiveFilter("due-today");
                       setSelectedGroup("Todas as Tarefas");
+                      setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       activeFilter === "due-today"
@@ -357,6 +413,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setActiveFilter("high-priority");
                       setSelectedGroup("Todas as Tarefas");
+                      setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       activeFilter === "high-priority"
@@ -376,6 +433,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setActiveFilter("overdue");
                       setSelectedGroup("Todas as Tarefas");
+                      setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       activeFilter === "overdue"
@@ -395,6 +453,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setActiveFilter("completed");
                       setSelectedGroup("Todas as Tarefas");
+                      setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       activeFilter === "completed"
@@ -416,12 +475,20 @@ export function DashboardLayout() {
           </div>
         </aside>
 
+        {/* Overlay para fechar o drawer no mobile */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900 mb-2">
+                <h2 className="text-xl font-semibold text-slate-900 mb-1">
                   {activeFilter === "all"
                     ? selectedGroup
                     : getFilterLabel(activeFilter)}{" "}
@@ -432,12 +499,13 @@ export function DashboardLayout() {
                 </p>
               </div>
 
-              <div className="flex items-center space-x-3">
+              {/* Filtros e ordenação: lado a lado no desktop, empilhados no mobile */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                 <Select
                   value={activeFilter}
                   onValueChange={(value: FilterType) => setActiveFilter(value)}
                 >
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="sm:w-44">
                     <Filter className="w-4 h-4 mr-2" />
                     <SelectValue />
                   </SelectTrigger>
@@ -457,7 +525,7 @@ export function DashboardLayout() {
                   value={sortBy}
                   onValueChange={(value: SortType) => setSortBy(value)}
                 >
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="sm:w-44">
                     <ArrowUpDown className="w-4 h-4 mr-2" />
                     <SelectValue />
                   </SelectTrigger>
@@ -474,7 +542,7 @@ export function DashboardLayout() {
             </div>
 
             {(activeFilter !== "all" || searchQuery) && (
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="text-sm text-slate-600">Filtros ativos:</span>
                 {activeFilter !== "all" && (
                   <Badge variant="secondary" className="text-xs">
@@ -502,9 +570,10 @@ export function DashboardLayout() {
             )}
           </div>
 
-          <Card>
+          {/* ===== Desktop/Tablet: TABELA ===== */}
+          <Card className="hidden md:block">
             <CardContent className="p-0">
-              {/* Table Header */}
+              {/* Cabeçalho da tabela */}
               <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
                 <div className="col-span-1"></div>
                 <div className="col-span-5">Tarefa</div>
@@ -514,7 +583,7 @@ export function DashboardLayout() {
                 <div className="col-span-1"></div>
               </div>
 
-              {/* Task Rows */}
+              {/* Linhas */}
               <div className="divide-y divide-slate-200">
                 {filteredTasks.map((task) => (
                   <div
@@ -531,6 +600,7 @@ export function DashboardLayout() {
                         className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
                       />
                     </div>
+
                     <div className="col-span-5 flex items-center">
                       <div>
                         <span
@@ -549,6 +619,7 @@ export function DashboardLayout() {
                         )}
                       </div>
                     </div>
+
                     <div className="col-span-2 flex items-center">
                       <span
                         className={`text-sm ${
@@ -562,11 +633,13 @@ export function DashboardLayout() {
                         {formatDate(task.dueDate)}
                       </span>
                     </div>
+
                     <div className="col-span-2 flex items-center">
                       <Badge variant="outline" className="text-xs">
                         {task.group}
                       </Badge>
                     </div>
+
                     <div className="col-span-1 flex items-center">
                       <Badge
                         className={`text-xs ${getPriorityColor(task.priority)}`}
@@ -574,6 +647,7 @@ export function DashboardLayout() {
                         {getPriorityLabel(task.priority)}
                       </Badge>
                     </div>
+
                     <div className="col-span-1 flex items-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -626,9 +700,114 @@ export function DashboardLayout() {
               )}
             </CardContent>
           </Card>
+
+          {/* ===== Mobile: CARDS ===== */}
+          <div className="md:hidden space-y-3">
+            {filteredTasks.map((task) => (
+              <Card
+                key={task.id}
+                className={`overflow-hidden ${
+                  task.completed ? "opacity-60" : ""
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => toggleTask(task.id)}
+                        className="mt-1 w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                      />
+                      <div>
+                        <h3
+                          className={`font-medium ${
+                            task.completed
+                              ? "line-through text-slate-500"
+                              : "text-slate-900"
+                          }`}
+                        >
+                          {task.title}
+                        </h3>
+                        {task.description && (
+                          <p className="text-sm text-slate-500 mt-1">
+                            {task.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+                          <Badge variant="outline">{task.group}</Badge>
+                          <Badge className={getPriorityColor(task.priority)}>
+                            {getPriorityLabel(task.priority)}
+                          </Badge>
+                          <span
+                            className={`${
+                              task.dueDate &&
+                              new Date(task.dueDate) < new Date() &&
+                              !task.completed
+                                ? "text-red-600 font-medium"
+                                : "text-slate-600"
+                            }`}
+                          >
+                            {formatDate(task.dueDate)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="shrink-0"
+                        >
+                          <MoreHorizontal className="w-5 h-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setEditingTask(task)}>
+                          <Edit className="w-4 h-4 mr-2" /> Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => setDeleteConfirm(task)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {filteredTasks.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-slate-500">
+                  {searchQuery || activeFilter !== "all"
+                    ? "Nenhuma tarefa corresponde aos filtros atuais"
+                    : "Nenhuma tarefa encontrada"}
+                </p>
+                {(searchQuery || activeFilter !== "all") && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2 bg-transparent"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setActiveFilter("all");
+                    }}
+                  >
+                    Limpar filtros
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
         </main>
       </div>
 
+      {/* Dialog: Editar */}
       {editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="sm:max-w-md">
@@ -640,6 +819,7 @@ export function DashboardLayout() {
         </Dialog>
       )}
 
+      {/* Dialog: Excluir */}
       {deleteConfirm && (
         <Dialog
           open={!!deleteConfirm}

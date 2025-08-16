@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,11 +26,19 @@ import { useTasks, type Task } from "@/contexts/tasks-context";
 import { Plus } from "lucide-react";
 
 interface AddTaskModalProps {
+  /** Quando presente, o modal funciona em modo edição (sem trigger interno) */
   editTask?: Task | null;
   onClose?: () => void;
+
+  /** (NOVO) Trigger customizado. Se passado, substitui o botão padrão */
+  trigger?: React.ReactNode;
 }
 
-export function AddTaskModal({ editTask, onClose }: AddTaskModalProps) {
+export function AddTaskModal({
+  editTask,
+  onClose,
+  trigger,
+}: AddTaskModalProps) {
   const { addTask, updateTask } = useTasks();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -43,7 +51,6 @@ export function AddTaskModal({ editTask, onClose }: AddTaskModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.title.trim()) return;
 
     const taskData = {
@@ -84,7 +91,8 @@ export function AddTaskModal({ editTask, onClose }: AddTaskModalProps) {
     }
   };
 
-  const DialogComponent = editTask ? "div" : Dialog;
+  // Em edição, quem controla o Dialog é o pai; aqui só renderizamos o conteúdo.
+  const DialogComponent: React.ElementType = editTask ? "div" : Dialog;
 
   return (
     <DialogComponent
@@ -92,10 +100,14 @@ export function AddTaskModal({ editTask, onClose }: AddTaskModalProps) {
     >
       {!editTask && (
         <DialogTrigger asChild>
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            Adicionar Tarefa
-          </Button>
+          {/** Se veio um trigger customizado (ex.: FAB), usamos ele.
+               Senão, renderizamos o botão padrão largo (desktop/sidebar). */}
+          {trigger ?? (
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Tarefa
+            </Button>
+          )}
         </DialogTrigger>
       )}
 
