@@ -98,7 +98,7 @@ export function AddTaskModal({
       {!editTask && (
         <DialogTrigger asChild>
           {trigger ?? (
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">
               <Plus className="w-4 h-4 mr-2" />
               Adicionar Tarefa
             </Button>
@@ -199,20 +199,21 @@ export function AddTaskModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, dueDate: e.target.value }))
               }
-              className="focus:border-blue-500 focus:ring-blue-500"
+              className="focus:border-blue-500 focus:ring-blue-500 max-md:max-w-40 md:max-w-36"
             />
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
             >
               {editTask ? "Atualizar Tarefa" : "Adicionar Tarefa"}
             </Button>
             <Button
               type="button"
               variant="outline"
+              className="cursor-pointer"
               onClick={() => (editTask ? onClose?.() : setOpen(false))}
             >
               Cancelar
