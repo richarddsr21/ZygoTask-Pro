@@ -232,11 +232,9 @@ export function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Botão hambúrguer (mobile) */}
             <button
               onClick={() => setSidebarOpen((v) => !v)}
               className="lg:hidden p-2 rounded-md hover:bg-slate-100"
@@ -251,7 +249,6 @@ export function DashboardLayout() {
 
             <h1 className="text-xl font-bold text-slate-900">ZygoTask Pro</h1>
 
-            {/* Busca (desktop/tablet) */}
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <Input
@@ -264,7 +261,6 @@ export function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Botão Adicionar (mobile) */}
             <div className="fixed bottom-6 right-6 z-50 lg:hidden">
               <AddTaskModal
                 trigger={
@@ -272,14 +268,12 @@ export function DashboardLayout() {
                     className="h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 flex items-center justify-center"
                     aria-label="Adicionar Tarefa"
                   >
-                    {/* ícone + acessibilidade */}
                     <Plus className="h-6 w-6 text-white" />
                   </Button>
                 }
               />
             </div>
 
-            {/* Perfil */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-2">
@@ -297,7 +291,6 @@ export function DashboardLayout() {
           </div>
         </div>
 
-        {/* Busca (mobile) */}
         <div className="relative mt-3 md:hidden">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
           <Input
@@ -310,20 +303,17 @@ export function DashboardLayout() {
       </header>
 
       <div className="flex flex-1">
-        {/* Sidebar: drawer no mobile, fixa no desktop */}
         <aside
           className={`fixed inset-y-0 left-0 w-80 bg-white border-r border-slate-200 transform transition-transform duration-200 ease-out lg:translate-x-0 lg:static z-50 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="p-6 overflow-y-auto h-full">
-            {/* Botão Adicionar (desktop) */}
             <div className="hidden lg:block">
               <AddTaskModal />
             </div>
 
             <div className="space-y-6 mt-6">
-              {/* Visão Geral */}
               <div className="bg-slate-50 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">
                   Visão Geral
@@ -354,7 +344,6 @@ export function DashboardLayout() {
                 </div>
               </div>
 
-              {/* Grupos de Tarefas */}
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-700">
                   Grupos de Tarefas
@@ -367,7 +356,7 @@ export function DashboardLayout() {
                     onClick={() => {
                       setSelectedGroup(group.name);
                       setActiveFilter("all");
-                      setSidebarOpen(false); // fecha o drawer no mobile ao selecionar
+                      setSidebarOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                       selectedGroup === group.name && activeFilter === "all"
@@ -383,7 +372,6 @@ export function DashboardLayout() {
                 ))}
               </div>
 
-              {/* Filtros Rápidos */}
               <div>
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">
                   Filtros Rápidos
@@ -475,7 +463,6 @@ export function DashboardLayout() {
           </div>
         </aside>
 
-        {/* Overlay para fechar o drawer no mobile */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 bg-black/30 lg:hidden"
@@ -483,7 +470,6 @@ export function DashboardLayout() {
           />
         )}
 
-        {/* Main Content */}
         <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
           <div className="mb-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
@@ -499,7 +485,6 @@ export function DashboardLayout() {
                 </p>
               </div>
 
-              {/* Filtros e ordenação: lado a lado no desktop, empilhados no mobile */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                 <Select
                   value={activeFilter}
@@ -570,10 +555,8 @@ export function DashboardLayout() {
             )}
           </div>
 
-          {/* ===== Desktop/Tablet: TABELA ===== */}
           <Card className="hidden md:block">
             <CardContent className="p-0">
-              {/* Cabeçalho da tabela */}
               <div className="grid grid-cols-12 gap-4 px-6 py-4 border-b border-slate-200 bg-slate-50 text-sm font-medium text-slate-700">
                 <div className="col-span-1"></div>
                 <div className="col-span-5">Tarefa</div>
@@ -583,7 +566,6 @@ export function DashboardLayout() {
                 <div className="col-span-1"></div>
               </div>
 
-              {/* Linhas */}
               <div className="divide-y divide-slate-200">
                 {filteredTasks.map((task) => (
                   <div
@@ -701,7 +683,6 @@ export function DashboardLayout() {
             </CardContent>
           </Card>
 
-          {/* ===== Mobile: CARDS ===== */}
           <div className="md:hidden space-y-3">
             {filteredTasks.map((task) => (
               <Card
@@ -807,7 +788,6 @@ export function DashboardLayout() {
         </main>
       </div>
 
-      {/* Dialog: Editar */}
       {editingTask && (
         <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
           <DialogContent className="sm:max-w-md">
@@ -819,7 +799,6 @@ export function DashboardLayout() {
         </Dialog>
       )}
 
-      {/* Dialog: Excluir */}
       {deleteConfirm && (
         <Dialog
           open={!!deleteConfirm}

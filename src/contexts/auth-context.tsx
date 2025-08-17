@@ -29,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
     const savedUser = localStorage.getItem("zygotask-user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -40,10 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
 
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Mock authentication - in real app, this would be an API call
     if (email && password.length >= 6) {
       const mockUser = {
         id: "1",
@@ -67,10 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   ): Promise<boolean> => {
     setIsLoading(true);
 
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Mock registration - in real app, this would be an API call
     if (name && email && password.length >= 6) {
       const mockUser = {
         id: "1",

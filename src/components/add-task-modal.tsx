@@ -26,11 +26,9 @@ import { useTasks, type Task } from "@/contexts/tasks-context";
 import { Plus } from "lucide-react";
 
 interface AddTaskModalProps {
-  /** Quando presente, o modal funciona em modo edição (sem trigger interno) */
   editTask?: Task | null;
   onClose?: () => void;
 
-  /** (NOVO) Trigger customizado. Se passado, substitui o botão padrão */
   trigger?: React.ReactNode;
 }
 
@@ -91,7 +89,6 @@ export function AddTaskModal({
     }
   };
 
-  // Em edição, quem controla o Dialog é o pai; aqui só renderizamos o conteúdo.
   const DialogComponent: React.ElementType = editTask ? "div" : Dialog;
 
   return (
@@ -100,8 +97,6 @@ export function AddTaskModal({
     >
       {!editTask && (
         <DialogTrigger asChild>
-          {/** Se veio um trigger customizado (ex.: FAB), usamos ele.
-               Senão, renderizamos o botão padrão largo (desktop/sidebar). */}
           {trigger ?? (
             <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="w-4 h-4 mr-2" />

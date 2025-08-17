@@ -1,4 +1,3 @@
-// app/layout.tsx
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/auth-context";
