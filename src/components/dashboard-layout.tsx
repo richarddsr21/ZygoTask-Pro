@@ -247,7 +247,9 @@ export function DashboardLayout() {
               )}
             </button>
 
-            <h1 className="text-xl font-bold text-slate-900">ZygoTask Pro</h1>
+            <h1 className="text-xl font-bold text-slate-900 cursor-default">
+              ZygoTask Pro
+            </h1>
 
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -361,7 +363,7 @@ export function DashboardLayout() {
                       setActiveFilter("all");
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                       selectedGroup === group.name && activeFilter === "all"
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-50"
@@ -386,7 +388,7 @@ export function DashboardLayout() {
                       setSelectedGroup("Todas as Tarefas");
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                       activeFilter === "due-today"
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-50"
@@ -406,7 +408,7 @@ export function DashboardLayout() {
                       setSelectedGroup("Todas as Tarefas");
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                       activeFilter === "high-priority"
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-50"
@@ -426,7 +428,7 @@ export function DashboardLayout() {
                       setSelectedGroup("Todas as Tarefas");
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                       activeFilter === "overdue"
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-50"
@@ -446,7 +448,7 @@ export function DashboardLayout() {
                       setSelectedGroup("Todas as Tarefas");
                       setSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
                       activeFilter === "completed"
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-50"
@@ -636,7 +638,11 @@ export function DashboardLayout() {
                     <div className="col-span-1 flex items-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="cursor-pointer"
+                          >
                             <MoreHorizontal className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
